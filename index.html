@@ -43,13 +43,21 @@
       <div class="dialog-kicker" id="dialog-kicker">EPA LEVEL III ECOREGION</div>
       <h2 id="dialog-title">Ecoregion</h2>
       <p id="dialog-summary"></p>
+      <figure class="vegetation-figure">
+        <img id="dialog-vegetation-image" alt="">
+        <figcaption id="dialog-image-caption"></figcaption>
+      </figure>
       <dl class="region-meta"><div><dt>Level III code</dt><dd id="dialog-code"></dd></div><div><dt>Level II parent</dt><dd id="dialog-parent"></dd></div><div><dt>Level I setting</dt><dd id="dialog-setting"></dd></div></dl>
-      <div class="dialog-ecology"><span>FIELD NOTE</span><p id="dialog-ecology"></p></div>
-      <p class="dialog-caveat">Hardiness zones and precipitation vary within ecoregions and use different map systems. There is no single zone or rainfall value for every region. Check the <a href="https://planthardiness.ars.usda.gov/">USDA hardiness map</a> and local climate normals for a site-specific estimate.</p>
+      <div class="dialog-ecology"><span>LANDSCAPE &amp; VEGETATION</span><p id="dialog-ecology"></p></div>
+      <section class="profile-facts" aria-label="Regional climate and soils">
+        <div><span class="fact-label">CLIMATE</span><p id="dialog-climate"></p></div>
+        <div><span class="fact-label">SOILS &amp; SUBSTRATE</span><p id="dialog-soil"></p></div>
+      </section>
+      <p class="dialog-caveat">Climate values are ecoregion area averages. PRISM normals use 1991–2020 for the contiguous U.S. and 1981–2010 for Alaska. USDA hardiness values describe average annual extreme minimum temperature (1991–2020); zones can vary within a region.</p>
       <a class="dialog-source" href="https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states" target="_blank" rel="noreferrer">EPA ecoregion maps &amp; descriptions ↗</a>
     </dialog>
 
-    <section class="sources"><span class="kicker">SOURCES &amp; NOTES</span><p>Boundaries and classifications: <a href="https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states">U.S. EPA Level III Ecoregions</a>. The map uses the EPA North American Level III GIS layer, clipped to U.S. state boundaries. Ecoregion names and parent classifications are EPA attributes. Ecological notes summarize the broader EPA Level I setting and are indicative, not a site-specific species or climate inventory.</p></section>
+    <section class="sources"><span class="kicker">SOURCES &amp; NOTES</span><p>Boundaries and classifications: <a href="https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states">U.S. EPA Level III Ecoregions</a>. Region descriptions and vegetation/soil details are drawn from the <a href="https://www.epa.gov/eco-research/ecoregions-north-america">Commission for Environmental Cooperation’s North American Terrestrial Ecoregions—Level III</a> (2011), used under <a href="https://creativecommons.org/licenses/by-nc-nd/3.0/">CC BY-NC-ND 3.0</a>. Climate normals: <a href="https://prism.oregonstate.edu/normals/">PRISM</a>, 1991–2020 (contiguous U.S.) and 1981–2010 (Alaska), averaged across each ecoregion. Hardiness estimates: <a href="https://planthardiness.ars.usda.gov/">USDA 2023 Plant Hardiness Zone Map</a>, based on 1991–2020 annual extreme minimum temperatures. Botanical drawings are original schematic illustrations, not photographs; labels are examples drawn from the region descriptions.</p></section>
   </main>
   <div id="map-tooltip" role="status" aria-live="polite"></div>
   <footer><span>FIELD NOTES · ECOREGIONS OF THE UNITED STATES</span><span>BOUNDARY: U.S. EPA · LEVEL III</span></footer>

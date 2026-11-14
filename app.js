@@ -1,44 +1,58 @@
 (() => {
   const $ = selector => document.querySelector(selector);
   const dialog = $('#region-dialog');
-  const ecology = {
-    'MARINE WEST COAST FOREST': ['Temperate forests shaped by Pacific moisture, with strong differences between coastal lowlands and higher mountain slopes.', 'Douglas-fir · western hemlock · western redcedar'],
-    'MEDITERRANEAN CALIFORNIA': ['A Mediterranean climate brings mild, wetter winters and warm, dry summers; forests, woodlands, and shrublands vary with elevation and coastal influence.', 'Coast live oak · tanoak · ponderosa pine'],
-    'NORTH AMERICAN DESERTS': ['Arid basins and plateaus with sparse, drought-adapted vegetation; elevation creates sharp local changes in temperature and plant communities.', 'Pinyon pine · juniper · mesquite'],
-    'GREAT PLAINS': ['Broad grassland and prairie landscapes, with woody vegetation concentrated along waterways and in more rugged or sheltered areas.', 'Cottonwood · oak · juniper'],
-    'EASTERN TEMPERATE FORESTS': ['A broad temperate region with deciduous and mixed forests, humid conditions, and strong local variation from coastal plain to upland.', 'Oak · hickory · maple'],
-    'NORTHERN FORESTS': ['Cooler forest landscapes shaped by long winters, with mixed hardwood and conifer communities and wetlands in many lowlands.', 'Birch · maple · spruce'],
-    'NORTHWESTERN FORESTED MOUNTAINS': ['High-relief western mountains where elevation, exposure, and snow create strong changes in forest type over short distances.', 'Douglas-fir · ponderosa pine · subalpine fir'],
-    'SOUTHERN SEMIARID HIGHLANDS': ['Elevated, relatively dry landscapes where mountain forests and woodlands meet basins and plateaus.', 'Ponderosa pine · pinyon pine · juniper'],
-    'TEMPERATE SIERRAS': ['Mountain landscapes with climate and vegetation patterns closely tied to elevation, slope, and seasonal moisture.', 'Pine · oak · fir'],
-    'TAIGA': ['Subarctic terrain with a short growing season, extensive boreal forest, wetlands, and large areas of open or sparsely treed land.', 'Black spruce · white spruce · tamarack'],
-    'TUNDRA': ['Cold, exposed landscapes with a very short growing season; trees are absent or limited in the highest and most northerly areas.', 'Trees sparse or absent; dwarf shrubs and sedges dominate'],
-    'HUDSON PLAIN': ['Low-lying northern landscapes with cold conditions, extensive wetlands, and a mix of forest, shrubland, and open habitats.', 'Black spruce · tamarack · white spruce'],
-    'TROPICAL DRY FORESTS': ['Warm tropical landscapes with pronounced dry seasons and vegetation adapted to seasonal water stress.', 'Oak · pine · tropical hardwoods'],
-    'TROPICAL WET FORESTS': ['Warm, humid landscapes with high rainfall and dense, diverse forest communities.', 'Tropical evergreen hardwoods']
-  };
-  const fallback = ['This EPA Level III region is part of a broad ecological setting. Landform, elevation, soils, and local moisture distinguish it from nearby regions.', 'Tree communities vary by local habitat; consult the EPA regional description for this ecoregion.'];
-
-  function description(feature) {
-    const [summary, trees] = ecology[feature.properties.level_i] || fallback;
-    return {summary, trees};
-  }
+  let profiles = new Map();
   function openGuide(feature) {
-    const p=feature.properties, notes=description(feature);
+    const p=feature.properties, profile=profiles.get(p.code);
+    if (!profile) return;
     $('#dialog-title').textContent=p.name;
     $('#dialog-kicker').textContent='EPA LEVEL III ECOREGION';
-    $('#dialog-summary').textContent=notes.summary;
+    $('#dialog-summary').textContent=profile.distinction;
     $('#dialog-code').textContent=p.code || '—';
     $('#dialog-parent').textContent=titleCase(p.level_ii || 'Not listed');
     $('#dialog-setting').textContent=titleCase(p.level_i || 'Not listed');
-    $('#dialog-ecology').textContent='Representative tree associations across this broader setting: '+notes.trees+'. These are regional examples, not a species inventory for every location.';
+    $('#dialog-ecology').textContent=profile.vegetation;
+    $('#dialog-soil').textContent=profile.soil;
+    const s=profile.stats;
+    $('#dialog-climate').textContent=`Annual precipitation: ${s.annualPrecipitationIn} in · mean annual temperature: ${s.annualMeanTempF}°F (PRISM, ${s.temperaturePeriod}). USDA mean annual extreme minimum: ${s.hardinessMeanExtremeMinF}°F, about zone ${s.hardinessZoneFromMean}; the central 80% of mapped values spans roughly zones ${s.hardinessZoneP10}–${s.hardinessZoneP90}.`;
+    const plants=plantLabels(profile.vegetation);
+    $('#dialog-vegetation-image').src=vegetationIllustration(profile,plants);
+    $('#dialog-vegetation-image').alt=`Schematic botanical illustration representing ${p.name}: ${plants.join(', ')}`;
+    $('#dialog-image-caption').textContent=`Field sketch · representative plants: ${plants.join(' · ')}`;
     if (!dialog.open) dialog.showModal();
   }
+  function plantLabels(text) {
+    const clauses=[...text.matchAll(/(?:consists of|includes|include|such as|dominated by)\s+([^.;]+)/gi)]
+      .map(match=>match[1]).filter(clause=>clause.split(',').length>1)
+      .sort((a,b)=>b.split(',').length-a.split(',').length);
+    const list=(clauses[0]||text.split(/[.;]/)[0]).replace(/\b(and|or)\b/gi,',').split(',')
+      .map(item=>item.trim().replace(/^(the|some|many|mostly|mainly|primarily|areas of)\s+/i,'').replace(/\s+/g,' '))
+      .filter(item=>item.length>3 && item.length<36 && !/\b(vegetation|community|communities|species|regions|forest|forests|grassland|grasslands|shrubland|shrublands|woodland|woodlands|habitats|areas|plants)\b/i.test(item));
+    const unique=[];
+    for(const item of list) if(!unique.some(x=>x.toLowerCase()===item.toLowerCase())) unique.push(item);
+    return unique.slice(0,3).length ? unique.slice(0,3) : ['regional flora','native grasses','woodland plants'];
+  }
+  function vegetationIllustration(profile,plants) {
+    const hue=[...profile.code].reduce((a,c)=>a+c.charCodeAt(0),0)%360;
+    const labels=plants.slice(0,3).map((x,i)=>`<text x="${95+i*150}" y="228" text-anchor="middle">${escapeXml(x.slice(0,24))}</text>`).join('');
+    const grass=/grass|prairie|steppe|meadow|tussock|sedge|marsh|tundra/i.test(profile.vegetation);
+    const desert=/desert|cactus|yucca|agave|succulent|arid|sagebrush/i.test(profile.vegetation);
+    const stems=[55,205,355].map((x,i)=>{
+      const top=72+(i%2)*18, height=114-(i%2)*12;
+      if(grass) return `<path d="M${x} 204 Q${x-5} 151 ${x-28} ${top+8} M${x} 204 Q${x+2} 150 ${x+1} ${top-8} M${x+2} 204 Q${x+5} 156 ${x+31} ${top+7} M${x} 204 Q${x-13} 165 ${x-39} ${top+32} M${x} 204 Q${x+19} 165 ${x+41} ${top+31}"/>`;
+      if(desert) return `<path d="M${x} 203 V${top+13} M${x} ${top+55} V${top+34} Q${x-21} ${top+34} ${x-21} ${top+18} M${x} ${top+45} Q${x+23} ${top+45} ${x+23} ${top+23}"/><path d="M${x-34} 202 Q${x-27} 184 ${x-19} 202 M${x+28} 201 Q${x+36} 179 ${x+44} 201"/>`;
+      return `<path d="M${x} 202 Q${x-4} 148 ${x} ${top+24}"/><path d="M${x} ${top+52} Q${x-42} ${top+28} ${x-39} ${top+7} Q${x-9} ${top+5} ${x} ${top+35} Q${x+8} ${top+1} ${x+40} ${top+10} Q${x+42} ${top+35} ${x} ${top+52}Z"/><path d="M${x} ${top+36} Q${x-25} ${top+12} ${x-17} ${top-4} Q${x+3} ${top+4} ${x} ${top+36} M${x} ${top+39} Q${x+20} ${top+8} ${x+31} ${top+4} Q${x+33} ${top+24} ${x} ${top+39}"/>`;
+    }).join('');
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 250"><rect width="420" height="250" fill="#e8e6db"/><path d="M0 188 Q85 168 150 188 T300 185 T420 180 V250 H0Z" fill="hsl(${hue} 23% 76%)"/><g fill="none" stroke="#315642" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">${stems}<path d="M25 204 Q35 183 44 204 M380 200 Q389 179 399 202" stroke-width="2"/></g><path d="M0 207 Q110 197 210 207 T420 203" fill="none" stroke="#947747" stroke-width="2"/><g fill="#315642" font-family="sans-serif" font-size="10">${labels}</g><text x="15" y="24" fill="#617365" font-family="monospace" font-size="9" letter-spacing="1.5">REGIONAL FIELD SKETCH · ${profile.code}</text></svg>`;
+    return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  }
+  function escapeXml(text) { return text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c])); }
   function titleCase(text) { return text.toLowerCase().replace(/\b\w/g, c => c.toUpperCase()); }
   Promise.all([
     fetch('assets/us-states-10m.json?v=5').then(response => { if(!response.ok) throw Error('Could not load state boundaries'); return response.json(); }),
-    fetch('assets/epa-level-iii-us.geojson?v=5').then(response => { if(!response.ok) throw Error('Could not load EPA ecoregions'); return response.json(); })
-  ]).then(([topology, regions]) => drawMap(topology, regions))
+    fetch('assets/epa-level-iii-us.geojson?v=5').then(response => { if(!response.ok) throw Error('Could not load EPA ecoregions'); return response.json(); }),
+    fetch('assets/region-profiles.json?v=6').then(response => { if(!response.ok) throw Error('Could not load regional profiles'); return response.json(); })
+  ]).then(([topology, regions, data]) => { profiles=new Map(data.map(profile=>[profile.code,profile])); drawMap(topology, regions); })
     .catch(error => {
       $('#map-count').textContent='Map failed to load';
       const message=$('#map-error');

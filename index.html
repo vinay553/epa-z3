@@ -4,9 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f2f0e7">
-  <meta name="description" content="An illustrated field guide to EPA Level III Ecoregion 3, the Willamette Valley of Oregon.">
-  <title>Field Notes: EPA Ecoregion 3 — Willamette Valley</title>
+  <meta name="description" content="Explore EPA Level III ecoregions across the United States with an interactive map and field notes.">
+  <title>Field Notes: EPA Level III Ecoregions of the United States</title>
   <link rel="stylesheet" href="styles.css">
+  <script defer src="assets/vendor/d3-array.min.js"></script>
   <script defer src="assets/vendor/d3-geo.min.js"></script>
   <script defer src="assets/vendor/topojson-client.min.js"></script>
   <script defer src="app.js"></script>
@@ -19,44 +20,37 @@
 
   <main id="top">
     <section class="intro" aria-labelledby="page-title">
-      <div class="eyebrow"><span class="eyebrow-line"></span> EPA LEVEL III ECOREGION 3 <span class="dot">·</span> OREGON</div>
-      <h1 id="page-title">The Willamette<br><em>Valley</em></h1>
-      <p class="dek">A broad, fertile lowland held between two mountain ranges, shaped by seasonal rain, deep alluvial soils, and a remarkable mosaic of prairie, oak savanna, and forest.</p>
-      <div class="facts"><div><b>37–60 in</b><span>annual precipitation</span></div><div><b>Mostly 8b</b><span>valley-floor hardiness</span></div><div><b>15–20°F</b><span>zone 8b average annual extreme minimum</span></div></div>
+      <div class="eyebrow"><span class="eyebrow-line"></span> EPA LEVEL III ECOREGIONS <span class="dot">·</span> UNITED STATES</div>
+      <h1 id="page-title">Many landscapes.<br><em>One map.</em></h1>
+      <p class="dek">Explore the country’s ecological regions, from coastal forests and open plains to desert basins and mountain ranges. Select any colored area for its EPA classification and a concise field note.</p>
+      <div class="facts"><div><b>108 ecoregions</b><span>EPA Level III · contiguous U.S. + Alaska</span></div><div><b>Click a region</b><span>Open its ecological profile</span></div><div><b>EPA boundaries</b><span>National map with state outlines</span></div></div>
     </section>
 
     <section class="map-section" aria-labelledby="map-title">
-      <div class="section-heading"><div><span class="kicker">LANDSCAPE LOCATOR</span><h2 id="map-title">A valley between ranges</h2></div><p>Click the highlighted ecoregion on either map to open its field guide.</p></div>
-      <div class="maps">
-        <figure class="map-card national-card">
-          <div class="map-label"><span>UNITED STATES</span><span class="map-key"><i></i> Ecoregion 3</span></div>
-          <svg id="national-map" role="img" aria-label="Map of the United States with the Willamette Valley highlighted in Oregon"></svg>
-          <figcaption>EPA Level III ecoregion boundary shown within the contiguous United States.</figcaption>
-        </figure>
-        <figure class="map-card regional-card">
-          <div class="map-label"><span>OREGON · PACIFIC NORTHWEST</span><span>FOCUS AREA</span></div>
-          <svg id="regional-map" role="img" aria-label="Close-up map of Oregon showing the Willamette Valley ecoregion"></svg>
-          <figcaption>Click the shaded valley. Neighboring mountain ecoregions rise to west and east.</figcaption>
-        </figure>
-      </div>
-      <div class="map-note"><span class="note-symbol">↗</span><span><b>Map note</b> EPA ecoregions describe ecological landscapes. USDA hardiness zones describe average annual extreme minimum temperatures; their boundaries do not match.</span></div>
+      <div class="section-heading"><div><span class="kicker">NATIONAL ECOREGION MAP</span><h2 id="map-title">The U.S., in ecological regions</h2></div><p>Select any colored area to open its field guide. Zoom and pan to explore.</p></div>
+      <figure class="map-card national-card">
+        <div class="map-label"><span>UNITED STATES · EPA LEVEL III</span><span id="map-count" class="map-key"><i></i> Loading regions…</span></div>
+        <div class="map-frame"><svg id="national-map" role="img" aria-label="Interactive map of EPA Level III ecoregions across the United States"></svg></div>
+        <p id="map-error" class="map-error" hidden>The map could not load. Please refresh the page to try again.</p>
+        <figcaption>EPA Level III ecoregions shown across U.S. states. Colors distinguish regions; state borders are drawn above the ecological boundaries.</figcaption>
+      </figure>
+      <div class="map-note"><span class="note-symbol">↗</span><span><b>Map note</b> EPA's Level III coverage here includes the contiguous U.S. and Alaska; Hawaii is not included in this EPA layer. USDA hardiness zones describe average annual extreme minimum temperatures, a separate classification.</span></div>
     </section>
 
-    <section class="guide" id="field-guide" aria-labelledby="guide-title">
-      <div class="guide-top"><span class="kicker">FIELD GUIDE <span class="guide-number">03</span></span><span class="guide-hint" id="guide-hint">Select the highlighted area to explore</span></div>
-      <div class="guide-grid">
-        <div class="guide-main"><h2 id="guide-title">A lowland of prairie and oak</h2><p>The Willamette Valley is a rolling plain of terraces and broad floodplains, with scattered hills and foothills. Historically, open grasslands and oak savannas met wet prairies, wetlands, and forest along the rivers. Today, deep fertile soils and a mild climate support one of Oregon’s most productive agricultural regions.</p>
-          <div class="tree-block"><span class="kicker">REPRESENTATIVE NATIVE TREES</span><div class="tree-list"><span>Oregon white oak</span><span>Douglas-fir</span><span>Bigleaf maple</span><span>Black cottonwood</span><span>Oregon ash</span></div><p class="small-note">These trees reflect several valley habitats, from dry oak openings to moist river corridors; they are not all equally common in every part of the ecoregion.</p></div>
-        </div>
-        <aside class="guide-side">
-          <div class="climate-card"><span class="kicker">CLIMATE SNAPSHOT</span><dl><div><dt>Rainfall</dt><dd>37–60 in / year</dd></div><div><dt>Typical valley floor</dt><dd>USDA zone 8b</dd></div><div><dt>Zone 8b range</dt><dd>15–20°F</dd></div><div><dt>Seasonal pattern</dt><dd>Mild, wet winters<br>Warm, dry summers</dd></div></dl><p>Foothills trend wetter and cooler. Urban pockets can reach 9a; elevations and local conditions shift the hardiness zone.</p></div>
-        </aside>
-      </div>
-      <div class="neighbors"><div class="neighbor-title"><span class="kicker">WHAT SETS IT APART</span><h3>Between coast and cascade</h3></div><div class="neighbor-copy"><p><b>To the west · Coast Range</b><br>The valley is lower, gentler, and generally drier. The Coast Range rises into wetter, forested mountains.</p><p><b>To the east · Cascades</b><br>The valley’s warm, broad floodplain gives way to steeper, higher terrain with cooler conditions and greater precipitation.</p></div></div>
-    </section>
+    <dialog id="region-dialog" aria-labelledby="dialog-title">
+      <form method="dialog"><button class="dialog-close" aria-label="Close field guide">×</button></form>
+      <div class="dialog-kicker" id="dialog-kicker">EPA LEVEL III ECOREGION</div>
+      <h2 id="dialog-title">Ecoregion</h2>
+      <p id="dialog-summary"></p>
+      <dl class="region-meta"><div><dt>Level III code</dt><dd id="dialog-code"></dd></div><div><dt>Level II parent</dt><dd id="dialog-parent"></dd></div><div><dt>Level I setting</dt><dd id="dialog-setting"></dd></div></dl>
+      <div class="dialog-ecology"><span>FIELD NOTE</span><p id="dialog-ecology"></p></div>
+      <p class="dialog-caveat">Hardiness zones and precipitation vary within ecoregions and use different map systems. There is no single zone or rainfall value for every region. Check the <a href="https://planthardiness.ars.usda.gov/">USDA hardiness map</a> and local climate normals for a site-specific estimate.</p>
+      <a class="dialog-source" href="https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states" target="_blank" rel="noreferrer">EPA ecoregion maps &amp; descriptions ↗</a>
+    </dialog>
 
-    <section class="sources"><span class="kicker">SOURCES &amp; NOTES</span><p>Boundary and ecoregion description: <a href="https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states">U.S. EPA Level III Ecoregions</a> and <a href="https://19january2021snapshot.epa.gov/sites/static/files/2020-07/documents/20110114paappendices1.pdf">EPA Willamette Valley profile</a>. Regional ecology: <a href="https://swap.oregon.gov/ecoregion/willamette-valley/">Oregon State Wildlife Action Plan</a>. Trees: <a href="https://extension.oregonstate.edu/catalog/em-9040-guide-riparian-tree-shrub-planting-willamette-valley-steps-success">OSU Extension</a>. Hardiness: <a href="https://planthardiness.ars.usda.gov/">USDA 2023 Plant Hardiness Zone Map</a> and <a href="https://extension.oregonstate.edu/sites/extd8/files/catalog/auto/EC1438.pdf">OSU Oregon zone guide</a>. Precipitation varies markedly from valley floor to foothills; the displayed range is a regional summary.</p></section>
+    <section class="sources"><span class="kicker">SOURCES &amp; NOTES</span><p>Boundaries and classifications: <a href="https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states">U.S. EPA Level III Ecoregions</a>. The map uses the EPA North American Level III GIS layer, clipped to U.S. state boundaries. Ecoregion names and parent classifications are EPA attributes. Ecological notes summarize the broader EPA Level I setting and are indicative, not a site-specific species or climate inventory.</p></section>
   </main>
+  <div id="map-tooltip" role="status" aria-live="polite"></div>
   <footer><span>FIELD NOTES · ECOREGIONS OF THE UNITED STATES</span><span>BOUNDARY: U.S. EPA · LEVEL III</span></footer>
 </body>
 </html>

@@ -1,7 +1,6 @@
 (() => {
   const $ = selector => document.querySelector(selector);
   const dialog = $('#region-dialog');
-  const palette = ['#b9c8ae','#d8c69a','#b7c5c2','#d7a985','#b5b38b','#c5b5a1','#a9bfad','#d4c4b4','#9eb3a9','#ddc88d'];
   const ecology = {
     'MARINE WEST COAST FOREST': ['Temperate forests shaped by Pacific moisture, with strong differences between coastal lowlands and higher mountain slopes.', 'Douglas-fir · western hemlock · western redcedar'],
     'MEDITERRANEAN CALIFORNIA': ['A Mediterranean climate brings mild, wetter winters and warm, dry summers; forests, woodlands, and shrublands vary with elevation and coastal influence.', 'Coast live oak · tanoak · ponderosa pine'],
@@ -20,7 +19,6 @@
   };
   const fallback = ['This EPA Level III region is part of a broad ecological setting. Landform, elevation, soils, and local moisture distinguish it from nearby regions.', 'Tree communities vary by local habitat; consult the EPA regional description for this ecoregion.'];
 
-  function hash(text) { let n=0; for (const c of text) n=(n*31+c.charCodeAt(0))|0; return Math.abs(n); }
   function description(feature) {
     const [summary, trees] = ecology[feature.properties.level_i] || fallback;
     return {summary, trees};
@@ -38,8 +36,8 @@
   }
   function titleCase(text) { return text.toLowerCase().replace(/\b\w/g, c => c.toUpperCase()); }
   Promise.all([
-    fetch('assets/us-states-10m.json').then(response => { if(!response.ok) throw Error('Could not load state boundaries'); return response.json(); }),
-    fetch('assets/epa-level-iii-us.geojson').then(response => { if(!response.ok) throw Error('Could not load EPA ecoregions'); return response.json(); })
+    fetch('assets/us-states-10m.json?v=5').then(response => { if(!response.ok) throw Error('Could not load state boundaries'); return response.json(); }),
+    fetch('assets/epa-level-iii-us.geojson?v=5').then(response => { if(!response.ok) throw Error('Could not load EPA ecoregions'); return response.json(); })
   ]).then(([topology, regions]) => drawMap(topology, regions))
     .catch(error => {
       $('#map-count').textContent='Map failed to load';
@@ -59,12 +57,15 @@
     const states=topojson.feature(topology,topology.objects.states).features;
     const projection=d3.geoAlbersUsa().fitExtent([[12,12],[width-12,height-12]],nation);
     const path=d3.geoPath(projection);
+    const colors=new Map([...regionData.features]
+      .sort((a,b)=>a.properties.code.localeCompare(b.properties.code,undefined,{numeric:true}))
+      .map((feature,index)=>[feature.properties.code,`hsl(${(index*137.508)%360} 43% 77%)`]));
     const defs=svg.append('defs');
     defs.append('clipPath').attr('id','us-clip').append('path').datum(nation).attr('d',path);
     svg.append('path').datum(nation).attr('class','us-land').attr('d',path);
     const visible=regionData.features.filter(f => path(f));
     svg.append('g').attr('clip-path','url(#us-clip)').selectAll('path').data(visible).join('path')
-      .attr('class','eco-region').attr('fill',d=>palette[hash(d.properties.name)%palette.length])
+      .attr('class','eco-region').attr('fill',d=>colors.get(d.properties.code))
       .attr('d',path).attr('tabindex','0').attr('role','button')
       .attr('aria-label',d=>`Open ${d.properties.name} ecoregion profile`)
       .on('click',(event,d)=>openGuide(d))

@@ -42,8 +42,12 @@
     fetch('assets/epa-level-iii-us.geojson').then(response => { if(!response.ok) throw Error('Could not load EPA ecoregions'); return response.json(); })
   ]).then(([topology, regions]) => drawMap(topology, regions))
     .catch(error => {
+      $('#map-count').textContent='Map failed to load';
       const message=$('#map-error');
-      if(message) message.hidden=false;
+      if(message) {
+        message.hidden=false;
+        message.textContent=`The map could not be drawn (${error.message}). Refresh to try again.`;
+      }
       console.error('Map setup failed:',error);
     });
 

@@ -6,12 +6,12 @@
   <meta name="theme-color" content="#f2f0e7">
   <meta name="description" content="Explore EPA Level III ecoregions across the United States with an interactive map and field notes.">
   <title>Field Notes: EPA Level III Ecoregions of the United States</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=6">
   <script defer src="assets/vendor/d3-array.min.js?v=5"></script>
   <script defer src="assets/vendor/d3-selection.min.js?v=5"></script>
   <script defer src="assets/vendor/d3-geo.min.js?v=5"></script>
   <script defer src="assets/vendor/topojson-client.min.js?v=5"></script>
-  <script defer src="app.js?v=5"></script>
+  <script defer src="app.js?v=6"></script>
 </head>
 <body>
   <header class="masthead">
@@ -44,8 +44,8 @@
       <h2 id="dialog-title">Ecoregion</h2>
       <p id="dialog-summary"></p>
       <figure class="vegetation-figure">
-        <img id="dialog-vegetation-image" alt="">
-        <figcaption id="dialog-image-caption"></figcaption>
+        <img id="dialog-vegetation-image" alt="" loading="lazy" decoding="async">
+        <figcaption><span id="dialog-image-caption"></span><span class="photo-credit">Photo: <span id="dialog-photo-author"></span> · <a id="dialog-photo-license" target="_blank" rel="noreferrer"></a> · <a id="dialog-photo-source" target="_blank" rel="noreferrer">View original ↗</a></span></figcaption>
       </figure>
       <dl class="region-meta"><div><dt>Level III code</dt><dd id="dialog-code"></dd></div><div><dt>Level II parent</dt><dd id="dialog-parent"></dd></div><div><dt>Level I setting</dt><dd id="dialog-setting"></dd></div></dl>
       <div class="dialog-ecology"><span>LANDSCAPE &amp; VEGETATION</span><p id="dialog-ecology"></p></div>
@@ -57,7 +57,7 @@
       <a class="dialog-source" href="https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states" target="_blank" rel="noreferrer">EPA ecoregion maps &amp; descriptions ↗</a>
     </dialog>
 
-    <section class="sources"><span class="kicker">SOURCES &amp; NOTES</span><p>Boundaries and classifications: <a href="https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states">U.S. EPA Level III Ecoregions</a>. Region descriptions and vegetation/soil details are drawn from the <a href="https://www.epa.gov/eco-research/ecoregions-north-america">Commission for Environmental Cooperation’s North American Terrestrial Ecoregions—Level III</a> (2011), used under <a href="https://creativecommons.org/licenses/by-nc-nd/3.0/">CC BY-NC-ND 3.0</a>. Climate normals: <a href="https://prism.oregonstate.edu/normals/">PRISM</a>, 1991–2020 (contiguous U.S.) and 1981–2010 (Alaska), averaged across each ecoregion. Hardiness estimates: <a href="https://planthardiness.ars.usda.gov/">USDA 2023 Plant Hardiness Zone Map</a>, based on 1991–2020 annual extreme minimum temperatures. Botanical drawings are original schematic illustrations, not photographs; labels are examples drawn from the region descriptions.</p></section>
+    <section class="sources"><span class="kicker">SOURCES &amp; NOTES</span><p>Boundaries and classifications: <a href="https://www.epa.gov/eco-research/level-iii-and-iv-ecoregions-continental-united-states">U.S. EPA Level III Ecoregions</a>. Region descriptions and vegetation/soil details are drawn from the <a href="https://www.epa.gov/eco-research/ecoregions-north-america">Commission for Environmental Cooperation’s North American Terrestrial Ecoregions—Level III</a> (2011), used under <a href="https://creativecommons.org/licenses/by-nc-nd/3.0/">CC BY-NC-ND 3.0</a>. Climate normals: <a href="https://prism.oregonstate.edu/normals/">PRISM</a>, 1991–2020 (contiguous U.S.) and 1981–2010 (Alaska), averaged across each ecoregion. Hardiness estimates: <a href="https://planthardiness.ars.usda.gov/">USDA 2023 Plant Hardiness Zone Map</a>, based on 1991–2020 annual extreme minimum temperatures. Vegetation photographs are credited individually in each profile; images are bundled from Wikimedia Commons and retain their source page and license.</p></section>
   </main>
   <div id="map-tooltip" role="status" aria-live="polite"></div>
   <footer><span>FIELD NOTES · ECOREGIONS OF THE UNITED STATES</span><span>BOUNDARY: U.S. EPA · LEVEL III</span></footer>

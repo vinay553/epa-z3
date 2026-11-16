@@ -11,7 +11,7 @@
   <script defer src="assets/vendor/d3-selection.min.js?v=5"></script>
   <script defer src="assets/vendor/d3-geo.min.js?v=5"></script>
   <script defer src="assets/vendor/topojson-client.min.js?v=5"></script>
-  <script defer src="app.js?v=9"></script>
+  <script defer src="app.js?v=10"></script>
 </head>
 <body>
   <header class="masthead">
@@ -47,6 +47,10 @@
         <img id="dialog-vegetation-image" alt="" loading="lazy" decoding="async">
         <figcaption><span id="dialog-image-caption"></span><span class="photo-credit">Photo: <span id="dialog-photo-author"></span> · <a id="dialog-photo-license" target="_blank" rel="noreferrer"></a> · <a id="dialog-photo-source" target="_blank" rel="noreferrer">View original ↗</a></span></figcaption>
       </figure>
+      <section id="botanical-panel" class="botanical-panel" aria-label="Representative native plants" hidden>
+        <div class="botanical-heading"><span>BOTANICAL SPECIMENS</span><small>Illustrated plants named in this region’s vegetation</small></div>
+        <div id="botanical-list" class="botanical-list"></div>
+      </section>
       <dl class="region-meta"><div><dt>Level III code</dt><dd id="dialog-code"></dd></div><div><dt>Level II parent</dt><dd id="dialog-parent"></dd></div><div><dt>Level I setting</dt><dd id="dialog-setting"></dd></div></dl>
       <div class="dialog-ecology"><span>LANDSCAPE &amp; VEGETATION</span><p id="dialog-ecology"></p></div>
       <section class="profile-facts" aria-label="Regional climate and soils">

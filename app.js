@@ -25,13 +25,27 @@
       const license=$('#dialog-photo-license');license.textContent=photo.license;license.href=photo.licenseUrl || photo.sourceUrl;
       $('#dialog-photo-source').href=photo.sourceUrl;
     }
+    const botanicalPanel=$('#botanical-panel'), botanicalList=$('#botanical-list');
+    botanicalList.replaceChildren();
+    const plants=Array.isArray(profile.plants) ? profile.plants : [];
+    botanicalPanel.hidden=plants.length===0;
+    for(const plant of plants) {
+      const card=document.createElement('figure');card.className='botanical-card';
+      const imageFrame=document.createElement('div');imageFrame.className='botanical-image-frame';
+      const specimen=document.createElement('img');specimen.src=plant.src;specimen.alt=plant.alt || `Botanical illustration of ${plant.commonName}`;specimen.loading='lazy';specimen.decoding='async';
+      imageFrame.append(specimen);
+      const caption=document.createElement('figcaption');
+      const common=document.createElement('strong');common.textContent=plant.commonName;
+      const scientific=document.createElement('em');scientific.textContent=plant.scientificName;
+      caption.append(common,scientific);card.append(imageFrame,caption);botanicalList.append(card);
+    }
     if (!dialog.open) dialog.showModal();
   }
   function titleCase(text) { return text.toLowerCase().replace(/\b\w/g, c => c.toUpperCase()); }
   Promise.all([
     fetch('assets/us-states-10m.json?v=5').then(response => { if(!response.ok) throw Error('Could not load state boundaries'); return response.json(); }),
     fetch('assets/epa-level-iii-us.geojson?v=5').then(response => { if(!response.ok) throw Error('Could not load EPA ecoregions'); return response.json(); }),
-    fetch('assets/region-profiles.json?v=9').then(response => { if(!response.ok) throw Error('Could not load regional profiles'); return response.json(); })
+    fetch('assets/region-profiles.json?v=10').then(response => { if(!response.ok) throw Error('Could not load regional profiles'); return response.json(); })
   ]).then(([topology, regions, data]) => { profiles=new Map(data.map(profile=>[profile.code,profile])); drawMap(topology, regions); })
     .catch(error => {
       $('#map-count').textContent='Map failed to load';

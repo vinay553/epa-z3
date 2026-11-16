@@ -36,8 +36,9 @@
       imageFrame.append(specimen);
       const caption=document.createElement('figcaption');
       const common=document.createElement('strong');common.textContent=plant.commonName;
-      const scientific=document.createElement('em');scientific.textContent=plant.scientificName;
-      caption.append(common,scientific);card.append(imageFrame,caption);botanicalList.append(card);
+      caption.append(common);
+      if(plant.scientificName) { const scientific=document.createElement('em');scientific.textContent=plant.scientificName;caption.append(scientific); }
+      card.append(imageFrame,caption);botanicalList.append(card);
     }
     if (!dialog.open) dialog.showModal();
   }
@@ -45,7 +46,7 @@
   Promise.all([
     fetch('assets/us-states-10m.json?v=5').then(response => { if(!response.ok) throw Error('Could not load state boundaries'); return response.json(); }),
     fetch('assets/epa-level-iii-us.geojson?v=5').then(response => { if(!response.ok) throw Error('Could not load EPA ecoregions'); return response.json(); }),
-    fetch('assets/region-profiles.json?v=11').then(response => { if(!response.ok) throw Error('Could not load regional profiles'); return response.json(); })
+    fetch('assets/region-profiles.json?v=12').then(response => { if(!response.ok) throw Error('Could not load regional profiles'); return response.json(); })
   ]).then(([topology, regions, data]) => { profiles=new Map(data.map(profile=>[profile.code,profile])); drawMap(topology, regions); })
     .catch(error => {
       $('#map-count').textContent='Map failed to load';
